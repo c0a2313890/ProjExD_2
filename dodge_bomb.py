@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -30,6 +31,7 @@ def check_bound(obj_rct:pg.Rect) -> tuple[bool, bool]:
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
+    cry_img = pg.image.load("fig/8.png")
     bg_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 2.0)
     kk_rct = kk_img.get_rect()
@@ -49,7 +51,25 @@ def main():
                 return
         if kk_rct.colliderect(bd_rct):  # こうかとんと爆弾の衝突
             print("Game Over")
+            # Game Overとこうかとんの描画
+            BG_img = pg.Surface((1200, 600))
+            BG_rct = BG_img.get_rect()
+            pg.draw.rect(BG_img, (0, 0, 0), (0, 1200, 0, 600))
+            BG_img.set_alpha(200)
+            screen.blit(BG_img, BG_rct)
+            fonto = pg.font.Font(None, 80)
+            txt = fonto.render("Game Over", 
+                               True, (255, 255, 255))
+            txt_rct = txt.get_rect()
+            txt_rct.center = WIDTH/2, HEIGHT/2
+            screen.blit(cry_img, [390, 270])
+            screen.blit(cry_img, [780, 270])
+            screen.blit(txt, txt_rct)
+            pg.display.update()
+            time.sleep(5)   
             return
+
+            
         screen.blit(bg_img, [0, 0]) 
 
         key_lst = pg.key.get_pressed()
