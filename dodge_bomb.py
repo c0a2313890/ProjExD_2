@@ -12,6 +12,7 @@ DELTA = {  #移動用辞書
     pg.K_LEFT: (-5, 0),
     pg.K_RIGHT: (+5, 0)
 }
+
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def check_bound(obj_rct:pg.Rect) -> tuple[bool, bool]:
@@ -38,6 +39,21 @@ def main():
     kk_rct.center = 900, 400
     clock = pg.time.Clock()
     tmr = 0
+    RIGHT_img = pg.transform.flip(kk_img, False, True) #画像の反転を作成
+    LEFT_img = kk_img
+    img_dict = {
+         (0, 0):pg.transform.rotozoom(LEFT_img, 0, 1.0),
+         (0, -5):pg.transform.rotozoom(RIGHT_img, -90, 1.0),
+         (+5, -5):pg.transform.rotozoom(RIGHT_img, 225, 1.0), 
+         (+5, 0):pg.transform.rotozoom(RIGHT_img, 180, 1.0),
+         (+5, +5):pg.transform.rotozoom(RIGHT_img, 135, 1.0),
+         (0, +5):pg.transform.rotozoom(RIGHT_img, 90, 1.0),
+         (-5, +5):pg.transform.rotozoom(LEFT_img, 45, 1.0),
+         (-5, 0):pg.transform.rotozoom(LEFT_img, 0, 1.0),
+         (-5, -5):pg.transform.rotozoom(LEFT_img, -45, 1.0)
+    }
+
+
     # この下に爆弾の描写
     bd_img = pg.Surface((20, 20))
     bd_img.set_colorkey((0, 0, 0))
@@ -69,15 +85,14 @@ def main():
             time.sleep(5)   
             return
 
-            
         screen.blit(bg_img, [0, 0]) 
-
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for k, v in DELTA.items():
             if key_lst[k]:
                 sum_mv[0] += v[0]
                 sum_mv[1] += v[1]
+        kk_img = img_dict[(sum_mv[0], sum_mv[1])]
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
